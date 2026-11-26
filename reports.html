@@ -1,0 +1,572 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fault Reports | Smart Lab Fault Reporter</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        /* Navigation */
+        header {
+            background: #153e68;
+            color: white;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        header h2 {
+            margin: 0;
+            font-size: 23px;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #fbbf24;
+        }
+
+        /* Main section */
+        .container {
+            max-width: 1600px;
+            margin: 35px auto;
+            padding: 0 25px;
+        }
+
+        .page-heading {
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            color: #153e68;
+            margin-bottom: 8px;
+            font-size: 30px;
+        }
+
+        .page-heading p {
+            color: #64748b;
+            margin: 0;
+        }
+
+        /* Search and filter */
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 22px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+        }
+
+        .filter-section input,
+        .filter-section select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+            background: white;
+        }
+
+        .filter-section input:focus,
+        .filter-section select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        /* Table */
+        .table-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .table-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .table-top h2 {
+            margin: 0;
+            color: #153e68;
+            font-size: 20px;
+        }
+
+        .report-count {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 1750px;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #153e68;
+            color: white;
+        }
+
+        th {
+            padding: 16px 13px;
+            text-align: left;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 16px 13px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        td:first-child {
+            font-weight: bold;
+            color: #153e68;
+        }
+
+        .student-name {
+            min-width: 140px;
+            font-weight: bold;
+        }
+
+        .description {
+            min-width: 180px;
+            max-width: 260px;
+            overflow-wrap: anywhere;
+        }
+
+        .date {
+            min-width: 145px;
+            white-space: nowrap;
+        }
+
+        .no-data {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        /* Status badges */
+        .status {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #946200;
+        }
+
+        .status-progress {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .status-resolved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-unknown {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        /* Update form */
+        .update-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 135px;
+        }
+
+        .update-form select {
+            padding: 9px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .update-form button {
+            padding: 9px;
+            background: #153e68;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .update-form button:hover {
+            background: #1d5b91;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 35px;
+            color: #64748b;
+        }
+
+        /* New report button */
+        .bottom-actions {
+            margin-top: 22px;
+        }
+
+        .new-report-btn {
+            display: inline-block;
+            padding: 13px 20px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .new-report-btn:hover {
+            background: #1d4ed8;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            background: #153e68;
+            color: white;
+            text-align: center;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        @media (max-width: 650px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav {
+                justify-content: center;
+                gap: 13px;
+            }
+
+            .container {
+                padding: 0 12px;
+                margin-top: 25px;
+            }
+
+            .filter-section {
+                grid-template-columns: 1fr;
+            }
+
+            .table-card {
+                padding: 12px;
+            }
+
+            .page-heading h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2>Smart Lab Fault Reporter</h2>
+
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('admin') }}">Dashboard</a>
+        <a href="{{ url_for('reports') }}">View Reports</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <section class="page-heading">
+        <h1>Laboratory Fault Reports</h1>
+        <p>View student details, search complaints and manage laboratory faults.</p>
+    </section>
+
+    <!-- Search and Filter -->
+    <section class="filter-section">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search student, register number, department, lab, computer or fault..."
+            oninput="filterReports()"
+        >
+
+        <select id="statusFilter" onchange="filterReports()">
+            <option value="all">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+        </select>
+
+    </section>
+
+    <!-- Reports Table -->
+    <section class="table-card">
+
+        <div class="table-top">
+            <h2>All Fault Reports</h2>
+
+            <span class="report-count" id="reportCount">
+                Reports: {{ reports|length }}
+            </span>
+        </div>
+
+        {% if reports %}
+
+        <div class="table-wrapper">
+
+            <table id="reportsTable">
+
+                <thead>
+                    <tr>
+                        <th>Report ID</th>
+                        <th>Student Name</th>
+                        <th>Register Number</th>
+                        <th>Department</th>
+                        <th>Student Username</th>
+                        <th>Lab Name</th>
+                        <th>Computer No.</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Date & Time</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for report in reports %}
+
+                    <tr class="report-row">
+
+                        <td>{{ report.id }}</td>
+
+                        <td class="student-name">
+                            {% if report.student_name %}
+                                {{ report.student_name }}
+                            {% else %}
+                                <span class="no-data">Not available</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ report.register_number or 'Not available' }}
+                        </td>
+
+                        <td>
+                            {{ report.department or 'Not available' }}
+                        </td>
+
+                        <td>
+                            {{ report.student_username or 'Not available' }}
+                        </td>
+
+                        <td>{{ report.lab_name }}</td>
+
+                        <td>{{ report.computer_number }}</td>
+
+                        <td>{{ report.category }}</td>
+
+                        <td class="description">
+                            {{ report.description }}
+                        </td>
+
+                        <td>
+                            {% if report.status == 'Pending' %}
+                                <span class="status status-pending">
+                                    Pending
+                                </span>
+                            {% elif report.status == 'In Progress' %}
+                                <span class="status status-progress">
+                                    In Progress
+                                </span>
+                            {% elif report.status == 'Resolved' %}
+                                <span class="status status-resolved">
+                                    Resolved
+                                </span>
+                            {% else %}
+                                <span class="status status-unknown">
+                                    {{ report.status or 'Unknown' }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td class="date">
+                            {{ report.created_at }}
+                        </td>
+
+                        <td>
+                            <form
+                                class="update-form"
+                                action="{{ url_for('update_status', report_id=report.id) }}"
+                                method="POST"
+                            >
+
+                                <select name="status" required>
+
+                                    <option value="Pending"
+                                        {% if report.status == 'Pending' %}selected{% endif %}>
+                                        Pending
+                                    </option>
+
+                                    <option value="In Progress"
+                                        {% if report.status == 'In Progress' %}selected{% endif %}>
+                                        In Progress
+                                    </option>
+
+                                    <option value="Resolved"
+                                        {% if report.status == 'Resolved' %}selected{% endif %}>
+                                        Resolved
+                                    </option>
+
+                                </select>
+
+                                <button type="submit">
+                                    Update Status
+                                </button>
+
+                            </form>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <p class="empty-message" id="noResults" style="display:none;">
+            No matching reports found.
+        </p>
+
+        {% else %}
+
+        <div class="empty-message">
+            <h3>No Fault Reports Found</h3>
+            <p>Student fault reports will appear here after submission.</p>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    <div class="bottom-actions">
+        <a href="{{ url_for('report') }}" class="new-report-btn">
+            + Submit New Report
+        </a>
+    </div>
+
+</main>
+
+<footer>
+    <p>Smart Lab Fault Reporter | Laboratory Management System</p>
+</footer>
+
+<script>
+    function filterReports() {
+
+        const searchValue = document
+            .getElementById("searchInput")
+            .value.toLowerCase();
+
+        const statusValue = document
+            .getElementById("statusFilter")
+            .value;
+
+        const rows = document.querySelectorAll(".report-row");
+
+        let visibleCount = 0;
+
+        rows.forEach(function(row) {
+
+            const rowText = row.innerText.toLowerCase();
+
+            const matchesSearch = rowText.includes(searchValue);
+
+            // Status is now the 10th column (index 9).
+            const statusCell = row.cells[9].innerText.trim();
+
+            const matchesStatus =
+                statusValue === "all" || statusCell === statusValue;
+
+            if (matchesSearch && matchesStatus) {
+                row.style.display = "";
+                visibleCount++;
+            } else {
+                row.style.display = "none";
+            }
+
+        });
+
+        document.getElementById("reportCount").textContent =
+            "Showing " + visibleCount + " of " + rows.length + " reports";
+
+        document.getElementById("noResults").style.display =
+            visibleCount === 0 ? "block" : "none";
+    }
+</script>
+
+</body>
+</html>

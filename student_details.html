@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details | SmartLab</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f6fb;
+            color: #14233d;
+        }
+
+        header {
+            background: #10213c;
+            color: white;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #60a5fa;
+        }
+
+        nav {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 55px auto;
+            padding: 0 20px;
+        }
+
+        .heading {
+            margin-bottom: 25px;
+        }
+
+        .heading small {
+            color: #2563eb;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .heading h1 {
+            margin: 12px 0;
+            font-size: 32px;
+        }
+
+        .heading p {
+            color: #64748b;
+        }
+
+        .details-card {
+            background: white;
+            padding: 35px;
+            border: 1px solid #e0e7f0;
+            border-radius: 16px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e5eaf1;
+            margin-bottom: 25px;
+        }
+
+        .avatar {
+            width: 75px;
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eaf0ff;
+            border-radius: 18px;
+            font-size: 38px;
+        }
+
+        .profile h2 {
+            font-size: 23px;
+            margin-bottom: 7px;
+        }
+
+        .profile p {
+            color: #64748b;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .detail {
+            padding: 18px;
+            background: #f7f9fc;
+            border-radius: 10px;
+        }
+
+        .detail label {
+            display: block;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 9px;
+        }
+
+        .detail p {
+            font-size: 16px;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 28px;
+            padding: 13px 20px;
+            background: #2563eb;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background: #1d4ed8;
+        }
+
+        @media (max-width: 600px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .details-card {
+                padding: 22px;
+            }
+
+            .heading h1 {
+                font-size: 27px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">Smart<span>Lab</span></div>
+
+    <nav>
+        <a href="{{ url_for('admin') }}">Dashboard</a>
+        <a href="{{ url_for('reports') }}">Fault Reports</a>
+        <a href="{{ url_for('students') }}">Students</a>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <section class="heading">
+        <small>LABORATORY MANAGEMENT SYSTEM</small>
+        <h1>Student Details</h1>
+        <p>Complete registration information of the selected student.</p>
+    </section>
+
+    <section class="details-card">
+
+        <div class="profile">
+            <div class="avatar">👨‍🎓</div>
+
+            <div>
+                <h2>{{ student.student_name }}</h2>
+                <p>{{ student.department }} Department</p>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+
+            <div class="detail">
+                <label>Student Name</label>
+                <p>{{ student.student_name }}</p>
+            </div>
+
+            <div class="detail">
+                <label>Username</label>
+                <p>{{ student.student_id }}</p>
+            </div>
+
+            <div class="detail">
+                <label>Register Number</label>
+                <p>{{ student.register_number or '-' }}</p>
+            </div>
+
+            <div class="detail">
+                <label>Department</label>
+                <p>{{ student.department }}</p>
+            </div>
+
+            <div class="detail">
+                <label>Joining Year</label>
+                <p>{{ student.year }}</p>
+            </div>
+
+        </div>
+
+        <a href="{{ url_for('students') }}" class="back-btn">
+            ← Back to Students
+        </a>
+
+    </section>
+
+</main>
+
+</body>
+</html>

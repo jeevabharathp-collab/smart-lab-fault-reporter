@@ -1,0 +1,1278 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1424">
+
+<title>SmartLab | Laboratory Fault Management</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='theme.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='buttons.css') }}">
+
+<script>
+(function () {
+    try {
+        const saved = localStorage.getItem("smartlab-theme") || "light";
+        document.documentElement.setAttribute("data-theme", saved);
+    } catch (e) {
+        document.documentElement.setAttribute("data-theme", "light");
+    }
+})();
+</script>
+
+<style>
+:root {
+    --home-bg: #f3f6fc;
+    --home-surface: #ffffff;
+    --home-text: #172b49;
+    --home-muted: #718096;
+    --home-border: #e1e8f1;
+    --home-blue: #2563eb;
+    --home-navy: #101d33;
+    --home-green: #059669;
+}
+
+html[data-theme="dark"] {
+    --home-bg: #0b1424;
+    --home-surface: #142238;
+    --home-text: #edf4ff;
+    --home-muted: #a2b2c8;
+    --home-border: #2b3d56;
+    --home-blue: #60a5fa;
+    --home-navy: #08111f;
+    --home-green: #34d399;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--home-bg);
+    color: var(--home-text);
+    line-height: 1.65;
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+}
+
+button {
+    font-family: inherit;
+}
+
+/* NAVIGATION */
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--home-surface);
+    border-bottom: 1px solid var(--home-border);
+    backdrop-filter: blur(18px);
+}
+
+.nav-container {
+    max-width: 1240px;
+    min-height: 76px;
+    padding: 12px 28px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--home-text);
+}
+
+.brand-logo {
+    width: 45px;
+    height: 45px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-size: 17px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #3b82f6, #1e40af);
+    box-shadow: 0 7px 18px rgba(37,99,235,.25);
+}
+
+.brand-name {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.brand-name span,
+.footer-brand span {
+    color: var(--home-blue);
+}
+
+.brand-caption {
+    display: block;
+    color: var(--home-muted);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    margin-top: -3px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 27px;
+}
+
+.nav-links > a:not(.action-btn) {
+    color: var(--home-muted);
+    font-size: 12px;
+    font-weight: 700;
+    transition: .2s;
+}
+
+.nav-links > a:hover {
+    color: var(--home-blue);
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.theme-toggle {
+    border: 1px solid var(--home-border);
+    border-radius: 10px;
+    background: var(--home-surface);
+    color: var(--home-text);
+    padding: 10px 13px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.theme-toggle:hover {
+    border-color: var(--home-blue);
+    color: var(--home-blue);
+}
+
+.nav-login {
+    background: var(--home-navy) !important;
+    color: white !important;
+    border-radius: 10px;
+    padding: 11px 19px;
+}
+
+/* HERO */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    padding: 92px 28px 100px;
+    background:
+        radial-gradient(circle at 80% 15%, rgba(59,130,246,.19), transparent 30%),
+        radial-gradient(circle at 5% 90%, rgba(20,184,166,.10), transparent 27%),
+        linear-gradient(135deg, #f8fbff, #eaf1ff);
+}
+
+html[data-theme="dark"] .hero {
+    background:
+        radial-gradient(circle at 80% 15%, rgba(37,99,235,.25), transparent 32%),
+        radial-gradient(circle at 5% 90%, rgba(20,184,166,.10), transparent 28%),
+        linear-gradient(135deg, #101e34, #0b1424);
+}
+
+.hero::before,
+.hero::after {
+    content: "";
+    position: absolute;
+    border: 1px solid rgba(59,130,246,.12);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.hero::before {
+    width: 450px;
+    height: 450px;
+    right: -160px;
+    top: -180px;
+}
+
+.hero::after {
+    width: 300px;
+    height: 300px;
+    right: -90px;
+    top: -105px;
+}
+
+.hero-container {
+    position: relative;
+    z-index: 2;
+    max-width: 1160px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    align-items: center;
+    gap: 65px;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 14px;
+    border-radius: 30px;
+    background: rgba(37,99,235,.10);
+    color: var(--home-blue);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    margin-bottom: 24px;
+}
+
+.eyebrow-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 0 4px rgba(16,185,129,.13);
+}
+
+.hero h1 {
+    color: #10213b;
+    font-size: clamp(42px, 5.2vw, 66px);
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -3px;
+    margin-bottom: 22px;
+}
+
+html[data-theme="dark"] .hero h1 {
+    color: #edf4ff;
+}
+
+.hero h1 span {
+    color: #2563eb;
+}
+
+html[data-theme="dark"] .hero h1 span {
+    color: #60a5fa;
+}
+
+.hero-description {
+    max-width: 550px;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 2;
+    margin-bottom: 30px;
+}
+
+html[data-theme="dark"] .hero-description {
+    color: #b3c2d7;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 13px;
+}
+
+.hero-actions .action-btn {
+    min-height: 48px;
+    padding: 13px 22px;
+    border-radius: 10px;
+}
+
+.hero-secondary {
+    background: var(--home-surface) !important;
+    color: var(--home-text) !important;
+    border: 1px solid var(--home-border) !important;
+}
+
+/* HERO DASHBOARD PREVIEW */
+
+.hero-visual {
+    position: relative;
+    min-height: 370px;
+    display: grid;
+    place-items: center;
+}
+
+.preview-card {
+    width: 100%;
+    max-width: 410px;
+    padding: 27px;
+    background: #ffffff;
+    color: #172b49;
+    border: 1px solid #e4ebf5;
+    border-radius: 20px;
+    box-shadow: 0 28px 75px rgba(16,40,80,.16);
+    animation: float 5s ease-in-out infinite;
+}
+
+.preview-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.preview-top h3 {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.system-badge {
+    padding: 6px 10px;
+    background: #dcfce7;
+    color: #047857;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.preview-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.preview-stat {
+    padding: 13px 9px;
+    border-radius: 11px;
+    background: #f1f5fb;
+}
+
+.preview-stat strong {
+    display: block;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.preview-stat span {
+    font-size: 9px;
+    color: #718096;
+    font-weight: 700;
+}
+
+.preview-stat:nth-child(1) strong { color: #d97706; }
+.preview-stat:nth-child(2) strong { color: #2563eb; }
+.preview-stat:nth-child(3) strong { color: #059669; }
+
+.preview-heading {
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.preview-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.preview-row:last-child {
+    border: none;
+}
+
+.preview-icon {
+    width: 39px;
+    height: 39px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    font-size: 17px;
+}
+
+.preview-icon.orange { background: #fff2df; }
+.preview-icon.blue { background: #eaf1ff; }
+.preview-icon.green { background: #e5f8ef; }
+
+.preview-info {
+    flex: 1;
+}
+
+.preview-info strong {
+    display: block;
+    font-size: 11px;
+}
+
+.preview-info small {
+    display: block;
+    color: #8794a8;
+    font-size: 9px;
+}
+
+.preview-status {
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.status-pending { color: #d97706; }
+.status-progress { color: #2563eb; }
+.status-resolved { color: #059669; }
+
+.floating-label {
+    position: absolute;
+    z-index: 3;
+    background: #ffffff;
+    color: #172b49;
+    border: 1px solid #e6edf7;
+    padding: 12px 15px;
+    border-radius: 11px;
+    font-size: 10px;
+    font-weight: 800;
+    box-shadow: 0 10px 30px rgba(16,40,80,.12);
+}
+
+.label-one { top: 12px; right: -12px; }
+.label-two { bottom: 12px; left: -12px; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-9px); }
+}
+
+/* TRUST BAR */
+
+.trust-strip {
+    background: var(--home-surface);
+    border-top: 1px solid var(--home-border);
+    border-bottom: 1px solid var(--home-border);
+    padding: 23px;
+}
+
+.trust-container {
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 48px;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--home-muted);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.trust-item span {
+    font-size: 19px;
+}
+
+/* GENERAL SECTION */
+
+.section {
+    max-width: 1160px;
+    padding: 90px 28px;
+    margin: auto;
+}
+
+.section-heading {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.section-label {
+    color: var(--home-blue);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    margin-bottom: 12px;
+}
+
+.section-heading h2 {
+    color: var(--home-text);
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 800;
+    letter-spacing: -1.3px;
+    margin-bottom: 11px;
+}
+
+.section-heading p {
+    color: var(--home-muted);
+    font-size: 12px;
+}
+
+/* PORTALS */
+
+.portal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.portal-card {
+    position: relative;
+    overflow: hidden;
+    padding: 34px;
+    background: var(--home-surface);
+    border: 1px solid var(--home-border);
+    border-radius: 17px;
+    box-shadow: 0 8px 28px rgba(20,40,70,.045);
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+}
+
+.portal-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 20px 45px rgba(20,40,70,.10);
+    border-color: rgba(37,99,235,.35);
+}
+
+.portal-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+}
+
+.student-card::before { background: #2563eb; }
+.staff-card::before { background: #059669; }
+
+.portal-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    font-size: 25px;
+    margin-bottom: 22px;
+}
+
+.student-card .portal-icon { background: rgba(37,99,235,.12); }
+.staff-card .portal-icon { background: rgba(5,150,105,.12); }
+
+.portal-tag {
+    color: var(--home-muted);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+    margin-bottom: 8px;
+}
+
+.portal-card h3 {
+    color: var(--home-text);
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.portal-card > p {
+    color: var(--home-muted);
+    font-size: 12px;
+    line-height: 1.9;
+    margin-bottom: 21px;
+    min-height: 68px;
+}
+
+.portal-features {
+    list-style: none;
+    margin-bottom: 25px;
+}
+
+.portal-features li {
+    color: var(--home-muted);
+    font-size: 11px;
+    margin: 12px 0;
+}
+
+.portal-features li::before {
+    content: "✓";
+    color: var(--home-green);
+    font-weight: 800;
+    margin-right: 10px;
+}
+
+.portal-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.portal-button {
+    min-height: 43px;
+    padding: 11px 17px;
+    border-radius: 9px;
+}
+
+.student-card .portal-button {
+    background: #2563eb;
+    color: white;
+}
+
+.staff-card .portal-button {
+    background: #059669;
+    color: white;
+}
+
+.register-link {
+    color: var(--home-blue);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.register-link:hover {
+    text-decoration: underline;
+}
+
+/* FEATURES */
+
+.features-section {
+    padding: 85px 28px;
+    background: var(--home-surface);
+    border-top: 1px solid var(--home-border);
+    border-bottom: 1px solid var(--home-border);
+}
+
+.features-container {
+    max-width: 1160px;
+    margin: auto;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.feature-card {
+    padding: 25px;
+    background: var(--home-bg);
+    border: 1px solid var(--home-border);
+    border-radius: 14px;
+    transition: transform .25s, border-color .25s;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(37,99,235,.4);
+}
+
+.feature-icon {
+    width: 45px;
+    height: 45px;
+    display: grid;
+    place-items: center;
+    background: rgba(37,99,235,.11);
+    border-radius: 12px;
+    font-size: 20px;
+    margin-bottom: 17px;
+}
+
+.feature-card h3 {
+    color: var(--home-text);
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.feature-card p {
+    color: var(--home-muted);
+    font-size: 11px;
+    line-height: 1.9;
+}
+
+/* CTA */
+
+.cta-section {
+    max-width: 1160px;
+    margin: 75px auto;
+    padding: 0 28px;
+}
+
+.cta-box {
+    position: relative;
+    overflow: hidden;
+    padding: 48px 25px;
+    border-radius: 19px;
+    text-align: center;
+    color: white;
+    background:
+        radial-gradient(circle at 90% 10%, rgba(96,165,250,.32), transparent 30%),
+        linear-gradient(120deg, #10213b, #1d4ed8);
+}
+
+.cta-box h2 {
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 800;
+    margin-bottom: 11px;
+}
+
+.cta-box p {
+    color: #dbeafe;
+    font-size: 12px;
+    margin-bottom: 23px;
+}
+
+.cta-box .action-btn {
+    background: white;
+    color: #1d4ed8;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 9px;
+}
+
+/* FOOTER */
+
+footer {
+    background: #081525;
+    color: white;
+    padding: 43px 28px 20px;
+}
+
+.footer-container {
+    max-width: 1160px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.footer-brand {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.footer-description {
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+    color: #cbd5e1;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.footer-links a:hover {
+    color: white;
+}
+
+.footer-bottom {
+    max-width: 1160px;
+    margin: 28px auto 0;
+    padding-top: 17px;
+    border-top: 1px solid #25364e;
+    color: #8493a8;
+    text-align: center;
+    font-size: 9px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+    .hero-container {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+
+    .hero-content {
+        text-align: center;
+    }
+
+    .hero-description {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-actions {
+        justify-content: center;
+    }
+
+    .hero-visual {
+        max-width: 480px;
+        width: 100%;
+        margin: auto;
+    }
+
+    .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 650px) {
+    .nav-container {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 13px 16px;
+    }
+
+    .nav-links {
+        width: 100%;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .nav-links > a:not(.action-btn) {
+        font-size: 10px;
+    }
+
+    .hero {
+        padding: 65px 18px;
+    }
+
+    .hero h1 {
+        letter-spacing: -1.7px;
+    }
+
+    .hero-visual {
+        min-height: 320px;
+    }
+
+    .preview-card {
+        padding: 20px;
+    }
+
+    .floating-label {
+        display: none;
+    }
+
+    .portal-grid,
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section {
+        padding: 65px 18px;
+    }
+
+    .features-section {
+        padding: 65px 18px;
+    }
+
+    .portal-card {
+        padding: 27px 22px;
+    }
+
+    .trust-container {
+        gap: 17px 25px;
+    }
+
+    .trust-item {
+        font-size: 10px;
+    }
+
+    .cta-section {
+        margin: 50px auto;
+        padding: 0 18px;
+    }
+
+    .cta-box {
+        padding: 36px 20px;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-links {
+        justify-content: center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+<header class="navbar">
+    <div class="nav-container">
+
+        <a href="{{ url_for('home') }}" class="brand">
+            <div class="brand-logo">SL</div>
+            <div>
+                <div class="brand-name">Smart<span>Lab</span></div>
+                <span class="brand-caption">FAULT REPORTING SYSTEM</span>
+            </div>
+        </a>
+
+        <nav class="nav-links">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="#portals">Portals</a>
+            <a href="#features">Features</a>
+
+            <div class="nav-actions">
+                <button type="button" class="theme-toggle"
+                        onclick="toggleSmartLabTheme()">
+                    ☾ Dark Mode
+                </button>
+
+                <a href="{{ url_for('student_login') }}"
+                   class="action-btn nav-login">
+                    Login →
+                </a>
+            </div>
+        </nav>
+
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-container">
+
+        <div class="hero-content">
+
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                SMART LABORATORY MANAGEMENT
+            </div>
+
+            <h1>
+                Smarter Labs.<br>
+                Faster <span>Solutions.</span>
+            </h1>
+
+            <p class="hero-description">
+                A centralized platform for reporting, tracking and managing
+                computer laboratory faults. Connect students and laboratory
+                staff through a clear and organized maintenance workflow.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#portals" class="action-btn btn-primary">
+                    Explore Portals →
+                </a>
+
+                <a href="#features" class="action-btn hero-secondary">
+                    Discover Features
+                </a>
+            </div>
+
+        </div>
+
+        <div class="hero-visual">
+
+            <div class="floating-label label-one">
+                ⚡ Simple Fault Reporting
+            </div>
+
+            <div class="preview-card">
+
+                <div class="preview-top">
+                    <h3>Fault Management Overview</h3>
+                    <span class="system-badge">● SYSTEM</span>
+                </div>
+
+                <div class="preview-stats">
+                    <div class="preview-stat">
+                        <strong>01</strong>
+                        <span>Pending</span>
+                    </div>
+
+                    <div class="preview-stat">
+                        <strong>02</strong>
+                        <span>In Progress</span>
+                    </div>
+
+                    <div class="preview-stat">
+                        <strong>03</strong>
+                        <span>Resolved</span>
+                    </div>
+                </div>
+
+                <div class="preview-heading">Example Report Activity</div>
+
+                <div class="preview-row">
+                    <div class="preview-icon orange">🖥️</div>
+                    <div class="preview-info">
+                        <strong>Hardware Issue</strong>
+                        <small>Computer Laboratory</small>
+                    </div>
+                    <span class="preview-status status-pending">Pending</span>
+                </div>
+
+                <div class="preview-row">
+                    <div class="preview-icon blue">🌐</div>
+                    <div class="preview-info">
+                        <strong>Network Issue</strong>
+                        <small>Internet Connectivity</small>
+                    </div>
+                    <span class="preview-status status-progress">In Progress</span>
+                </div>
+
+                <div class="preview-row">
+                    <div class="preview-icon green">⚙️</div>
+                    <div class="preview-info">
+                        <strong>Software Issue</strong>
+                        <small>Application Error</small>
+                    </div>
+                    <span class="preview-status status-resolved">Resolved</span>
+                </div>
+
+            </div>
+
+            <div class="floating-label label-two">
+                ✓ Organized Maintenance
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- TRUST STRIP -->
+<section class="trust-strip">
+    <div class="trust-container">
+
+        <div class="trust-item"><span>🔐</span> Secure User Access</div>
+        <div class="trust-item"><span>📋</span> Organized Reports</div>
+        <div class="trust-item"><span>📊</span> Status Monitoring</div>
+        <div class="trust-item"><span>💻</span> Lab Management</div>
+
+    </div>
+</section>
+
+<!-- PORTALS -->
+<section class="section" id="portals">
+
+    <div class="section-heading">
+        <div class="section-label">GET STARTED</div>
+        <h2>Choose Your Portal</h2>
+        <p>Access SmartLab using your authorized account.</p>
+    </div>
+
+    <div class="portal-grid">
+
+        <!-- STUDENT PORTAL -->
+        <div class="portal-card student-card">
+
+            <div class="portal-icon">🎓</div>
+            <div class="portal-tag">FOR STUDENTS</div>
+
+            <h3>Student Portal</h3>
+
+            <p>
+                Report computer laboratory problems, submit complaints
+                and follow the progress of your submitted fault reports.
+            </p>
+
+            <ul class="portal-features">
+                <li>Student account registration</li>
+                <li>Submit laboratory fault reports</li>
+                <li>Track complaint status</li>
+            </ul>
+
+            <div class="portal-actions">
+                <a href="{{ url_for('student_login') }}"
+                   class="action-btn portal-button">
+                    Student Login →
+                </a>
+
+                <a href="{{ url_for('register') }}"
+                   class="register-link">
+                    Create Account
+                </a>
+            </div>
+
+        </div>
+
+        <!-- STAFF PORTAL -->
+        <div class="portal-card staff-card">
+
+            <div class="portal-icon">🛠️</div>
+            <div class="portal-tag">FOR LAB STAFF & ASSISTANTS</div>
+
+            <h3>Staff Portal</h3>
+
+            <p>
+                Manage student complaints, review reported laboratory
+                faults and update maintenance and resolution progress.
+            </p>
+
+            <ul class="portal-features">
+                <li>View all student fault reports</li>
+                <li>Monitor complaint statistics</li>
+                <li>Update fault resolution status</li>
+            </ul>
+
+            <div class="portal-actions">
+                <a href="{{ url_for('admin_login') }}"
+                   class="action-btn portal-button">
+                    Staff Login →
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+
+    <div class="features-container">
+
+        <div class="section-heading">
+            <div class="section-label">PLATFORM CAPABILITIES</div>
+            <h2>Designed for Better Lab Management</h2>
+            <p>Simple tools to improve how laboratory issues are handled.</p>
+        </div>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+                <div class="feature-icon">📝</div>
+                <h3>Easy Fault Submission</h3>
+                <p>
+                    Students can report hardware, software and
+                    network-related laboratory problems.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔎</div>
+                <h3>Report Tracking</h3>
+                <p>
+                    Monitor complaints and check their current
+                    resolution status.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Management Dashboard</h3>
+                <p>
+                    Staff can view report statistics and manage
+                    laboratory complaints.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🖥️</div>
+                <h3>Computer Lab Support</h3>
+                <p>
+                    Organize reported issues based on laboratory
+                    and computer number.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <h3>Role-Based Access</h3>
+                <p>
+                    Separate student and staff access to their
+                    respective platform features.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Structured Workflow</h3>
+                <p>
+                    Maintain an organized process for reporting
+                    and resolving laboratory issues.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- CALL TO ACTION -->
+<section class="cta-section">
+    <div class="cta-box">
+
+        <h2>Make Laboratory Maintenance Smarter</h2>
+
+        <p>
+            Use SmartLab to report, monitor and manage
+            computer laboratory issues efficiently.
+        </p>
+
+        <a href="#portals" class="action-btn">
+            Access Your Portal →
+        </a>
+
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+
+    <div class="footer-container">
+
+        <div>
+            <div class="footer-brand">
+                Smart<span>Lab</span> Fault Reporter
+            </div>
+
+            <p class="footer-description">
+                A digital platform for computer laboratory
+                fault reporting and management.
+            </p>
+        </div>
+
+        <div class="footer-links">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="#portals">Portals</a>
+            <a href="#features">Features</a>
+            <a href="{{ url_for('student_login') }}">Student Login</a>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        © 2026 Smart Lab Fault Reporter. All Rights Reserved.
+    </div>
+
+</footer>
+
+<script src="{{ url_for('static', filename='theme.js') }}"></script>
+
+</body>
+</html>
