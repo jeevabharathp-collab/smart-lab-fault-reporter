@@ -1039,9 +1039,9 @@ def logout():
 # --------------------------------------------------
 # 16. RUN APPLICATION
 # --------------------------------------------------
+# Create database tables when the application starts
+create_table()
+
 
 if __name__ == "__main__":
-
-    create_table()
-
     app.run(debug=True)
