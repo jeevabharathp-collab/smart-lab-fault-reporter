@@ -1,0 +1,491 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Report a Fault | SmartLab</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        /* HEADER */
+
+        header {
+            background: #102b4c;
+            color: white;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #60a5fa;
+        }
+
+        nav {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+            padding: 10px 14px;
+            border-radius: 7px;
+            transition: 0.2s;
+        }
+
+        nav a:hover {
+            background: #254c75;
+            color: #fbbf24;
+        }
+
+        /* COMMON BUTTONS */
+
+        .action-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 7px;
+            padding: 12px 19px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(0.94);
+        }
+
+        .action-btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        /* FORM CONTAINER */
+
+        .container {
+            max-width: 720px;
+            margin: 45px auto;
+            padding: 0 20px;
+        }
+
+        .form-card {
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .heading {
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .heading small {
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .heading h1 {
+            color: #153e68;
+            font-size: 29px;
+            margin: 12px 0;
+        }
+
+        .heading p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* FLASH MESSAGES */
+
+        .message {
+            padding: 13px 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .message.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* FORM */
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 9px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #334155;
+        }
+
+        .required {
+            color: #dc2626;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #fff;
+            color: #1e293b;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        textarea {
+            min-height: 145px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .field-help {
+            display: block;
+            margin-top: 7px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .character-count {
+            text-align: right;
+            margin-top: 7px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        /* BUTTON AREA */
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .button-group button,
+        .button-group a {
+            flex: 1;
+        }
+
+        /* FOOTER */
+
+        .form-footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav {
+                gap: 5px;
+            }
+
+            nav a {
+                padding: 9px;
+            }
+
+            .container {
+                margin: 25px auto;
+                padding: 0 12px;
+            }
+
+            .form-card {
+                padding: 23px 18px;
+            }
+
+            .heading h1 {
+                font-size: 25px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .button-group button,
+            .button-group a {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        Smart<span>Lab</span> Fault Reporter
+    </div>
+
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('student_dashboard') }}">My Reports</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+
+</header>
+
+<main class="container">
+
+    <section class="form-card">
+
+        <div class="heading">
+
+            <small>STUDENT PORTAL</small>
+
+            <h1>Report a Laboratory Fault</h1>
+
+            <p>
+                Provide the laboratory and computer details below.
+                Our lab staff will review your fault report.
+            </p>
+
+        </div>
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% for category, message in messages %}
+
+                <div class="message {{ category }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endwith %}
+
+        <!-- FAULT REPORT FORM -->
+
+        <form action="{{ url_for('report') }}"
+              method="POST"
+              id="faultForm">
+
+            <div class="form-group">
+
+                <label for="lab_name">
+                    Lab Name <span class="required">*</span>
+                </label>
+
+                <select name="lab_name" id="lab_name" required>
+
+                    <option value="">Select Lab</option>
+
+                    <option value="Computer Lab 1">Computer Lab 1</option>
+
+                    <option value="Computer Lab 2">Computer Lab 2</option>
+
+                    <option value="Programming Lab">Programming Lab</option>
+
+                    <option value="Networking Lab">Networking Lab</option>
+
+                    <option value="Other Lab">Other Lab</option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="computer_number">
+                    Computer Number <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    name="computer_number"
+                    id="computer_number"
+                    placeholder="Example: PC-05"
+                    maxlength="30"
+                    required
+                >
+
+                <span class="field-help">
+                    Enter the computer identification number.
+                </span>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="category">
+                    Fault Category <span class="required">*</span>
+                </label>
+
+                <select name="category" id="category" required>
+
+                    <option value="">Select Category</option>
+
+                    <option value="Hardware">Hardware</option>
+
+                    <option value="Software">Software</option>
+
+                    <option value="Network">Network</option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="description">
+                    Problem Description <span class="required">*</span>
+                </label>
+
+                <textarea
+                    name="description"
+                    id="description"
+                    placeholder="Explain the laboratory problem in detail..."
+                    maxlength="1000"
+                    required
+                ></textarea>
+
+                <div class="character-count">
+                    <span id="charCount">0</span>/1000 characters
+                </div>
+
+            </div>
+
+            <!-- FORM BUTTONS -->
+
+            <div class="button-group">
+
+                <button
+                    type="submit"
+                    class="action-btn btn-primary"
+                    id="submitButton"
+                >
+                    Submit Fault Report
+                </button>
+
+                <a
+                    href="{{ url_for('student_dashboard') }}"
+                    class="action-btn btn-cancel"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+        <div class="form-footer">
+            SmartLab Fault Reporter | Laboratory Support System
+        </div>
+
+    </section>
+
+</main>
+
+<script>
+
+    const description = document.getElementById("description");
+    const charCount = document.getElementById("charCount");
+    const faultForm = document.getElementById("faultForm");
+    const submitButton = document.getElementById("submitButton");
+
+    // Description character counter
+
+    description.addEventListener("input", function() {
+
+        charCount.textContent = this.value.length;
+
+    });
+
+    // Prevent accidental multiple submissions
+
+    faultForm.addEventListener("submit", function(event) {
+
+        if (!faultForm.checkValidity()) {
+            return;
+        }
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Submitting...";
+
+    });
+
+</script>
+
+</body>
+</html>

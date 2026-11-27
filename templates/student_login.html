@@ -1,0 +1,628 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Login | SmartLab Fault Reporter</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- SmartLab Common Button Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='buttons.css') }}">
+
+    <style>
+        :root {
+            --navy: #101e36;
+            --blue: #2563eb;
+            --blue-dark: #1d4ed8;
+            --text: #17243b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --background: #f5f8fd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 10% 10%, rgba(37,99,235,0.09), transparent 30%),
+                radial-gradient(circle at 90% 90%, rgba(59,130,246,0.08), transparent 30%),
+                var(--background);
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 980px;
+            min-height: 590px;
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            background: white;
+            border: 1px solid #e8edf5;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 70px rgba(15,35,70,0.10);
+        }
+
+        /* BRAND PANEL */
+
+        .brand-panel {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 42px 35px;
+            color: white;
+            background:
+                radial-gradient(circle at 90% 10%, rgba(96,165,250,0.35), transparent 35%),
+                linear-gradient(145deg, #102f52, #1d4ed8);
+        }
+
+        .brand-panel::before,
+        .brand-panel::after {
+            content: "";
+            position: absolute;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .brand-panel::before {
+            width: 320px;
+            height: 320px;
+            right: -160px;
+            top: 170px;
+        }
+
+        .brand-panel::after {
+            width: 230px;
+            height: 230px;
+            right: -110px;
+            top: 215px;
+        }
+
+        .brand-content,
+        .brand-footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-logo {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.17);
+            border: 1px solid rgba(255,255,255,0.25);
+            font-size: 21px;
+            font-weight: 800;
+            margin-bottom: 28px;
+        }
+
+        .brand-title {
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.25;
+            margin-bottom: 16px;
+        }
+
+        .brand-description {
+            max-width: 320px;
+            color: #dbeafe;
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        .brand-features {
+            list-style: none;
+            margin-top: 35px;
+        }
+
+        .brand-features li {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin-bottom: 17px;
+            color: #eff6ff;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .feature-check {
+            width: 23px;
+            height: 23px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.15);
+            border-radius: 7px;
+            font-size: 12px;
+        }
+
+        .brand-footer {
+            padding-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.18);
+            color: #bfdbfe;
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        /* LOGIN PANEL */
+
+        .form-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 55px 55px;
+        }
+
+        .form-heading {
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            color: var(--blue);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .form-heading h1 {
+            color: var(--navy);
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+        }
+
+        .form-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        /* FLASH MESSAGES */
+
+        .message {
+            padding: 12px 14px;
+            margin-bottom: 18px;
+            border-radius: 9px;
+            font-size: 12px;
+            line-height: 1.6;
+            border: 1px solid transparent;
+        }
+
+        .success {
+            background: #ecfdf5;
+            color: #047857;
+            border-color: #a7f3d0;
+        }
+
+        .error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+
+        .info {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-color: #bfdbfe;
+        }
+
+        .warning {
+            background: #fffbeb;
+            color: #b45309;
+            border-color: #fde68a;
+        }
+
+        /* FORM */
+
+        .form-group {
+            margin-bottom: 21px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 9px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 14px;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .form-group input {
+            width: 100%;
+            height: 49px;
+            padding: 12px 14px 12px 43px;
+            border: 1px solid #dbe3ee;
+            border-radius: 9px;
+            background: #fbfcfe;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-group input::placeholder {
+            color: #a0aabd;
+        }
+
+        .form-group input:hover {
+            border-color: #94a3b8;
+        }
+
+        .form-group input:focus {
+            background: white;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.09);
+        }
+
+        .password-box input {
+            padding-right: 72px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            color: var(--blue);
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .toggle-password:hover {
+            color: var(--blue-dark);
+        }
+
+        /* LOGIN BUTTON */
+
+        .login-btn {
+            width: 100%;
+            min-height: 49px;
+            margin-top: 5px;
+            font-size: 13px;
+            border-radius: 9px;
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        /* FOOTER LINKS */
+
+        .register-link {
+            text-align: center;
+            margin-top: 26px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .register-link a,
+        .back-link {
+            color: var(--blue);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .register-link a:hover,
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 24px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .security-note {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 7px;
+            margin-top: 32px;
+            color: #94a3b8;
+            font-size: 10px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 750px) {
+            .login-wrapper {
+                max-width: 480px;
+                grid-template-columns: 1fr;
+            }
+
+            .brand-panel {
+                padding: 28px;
+            }
+
+            .brand-title {
+                font-size: 25px;
+            }
+
+            .brand-features {
+                display: none;
+            }
+
+            .brand-footer {
+                margin-top: 25px;
+            }
+
+            .form-panel {
+                padding: 38px 30px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            body {
+                padding: 12px;
+            }
+
+            .brand-panel {
+                padding: 25px 22px;
+            }
+
+            .form-panel {
+                padding: 32px 22px;
+            }
+
+            .form-heading h1 {
+                font-size: 26px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-wrapper">
+
+    <!-- LEFT BRAND PANEL -->
+
+    <section class="brand-panel">
+
+        <div class="brand-content">
+
+            <div class="brand-logo">SL</div>
+
+            <h2 class="brand-title">
+                Welcome to<br>
+                SmartLab.
+            </h2>
+
+            <p class="brand-description">
+                Your centralized platform for reporting laboratory
+                problems and tracking maintenance progress.
+            </p>
+
+            <ul class="brand-features">
+                <li>
+                    <span class="feature-check">✓</span>
+                    Easy laboratory fault reporting
+                </li>
+
+                <li>
+                    <span class="feature-check">✓</span>
+                    Track your submitted complaints
+                </li>
+
+                <li>
+                    <span class="feature-check">✓</span>
+                    Monitor resolution progress
+                </li>
+            </ul>
+
+        </div>
+
+        <div class="brand-footer">
+            SMART LAB FAULT REPORTER<br>
+            A smarter way to manage laboratory issues.
+        </div>
+
+    </section>
+
+    <!-- RIGHT LOGIN PANEL -->
+
+    <main class="form-panel">
+
+        <div class="form-heading">
+
+            <div class="form-label">STUDENT ACCESS</div>
+
+            <h1>Student Login</h1>
+
+            <p>
+                Enter your student credentials to access your
+                laboratory reporting dashboard.
+            </p>
+
+        </div>
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+
+                <div class="message {{ category }}" role="alert">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+        {% endwith %}
+
+        <!-- LOGIN FORM -->
+
+        <form method="POST"
+              action="{{ url_for('student_login') }}"
+              onsubmit="return handleLoginSubmit(this)">
+
+            <div class="form-group">
+
+                <label for="username">Student Username</label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon" aria-hidden="true">👤</span>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your student username"
+                        autocomplete="username"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="password">Password</label>
+
+                <div class="input-wrapper password-box">
+
+                    <span class="input-icon" aria-hidden="true">🔒</span>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="toggle-password"
+                        onclick="togglePassword()"
+                        aria-controls="password"
+                        aria-label="Show password">
+                        Show
+                    </button>
+
+                </div>
+
+            </div>
+
+            <button type="submit"
+                    class="action-btn btn-primary login-btn"
+                    id="loginButton">
+                Login to Dashboard →
+            </button>
+
+        </form>
+
+        <div class="register-link">
+            New student?
+            <a href="{{ url_for('register') }}">Create an Account</a>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="back-link">
+            ← Back to Home
+        </a>
+
+        <div class="security-note">
+            🔐 Your student account is protected.
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+    function togglePassword() {
+
+        const passwordField =
+            document.getElementById("password");
+
+        const button =
+            document.querySelector(".toggle-password");
+
+        if (passwordField.type === "password") {
+
+            passwordField.type = "text";
+            button.textContent = "Hide";
+            button.setAttribute("aria-label", "Hide password");
+
+        } else {
+
+            passwordField.type = "password";
+            button.textContent = "Show";
+            button.setAttribute("aria-label", "Show password");
+
+        }
+    }
+
+    function handleLoginSubmit(form) {
+
+        if (!form.checkValidity()) {
+            return false;
+        }
+
+        const loginButton =
+            document.getElementById("loginButton");
+
+        loginButton.disabled = true;
+        loginButton.textContent = "Signing in...";
+
+        return true;
+    }
+</script>
+
+</body>
+</html>
