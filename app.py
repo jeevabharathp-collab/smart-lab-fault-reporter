@@ -446,14 +446,11 @@ def report():
 # 10. STAFF REGISTRATION
 # --------------------------------------------------
 
+
 @app.route("/staff_register", methods=["GET", "POST"])
 def staff_register():
 
     if request.method == "POST":
-
-        registration_code = request.form.get(
-            "registration_code", ""
-        ).strip()
 
         staff_username = request.form.get(
             "staff_username", ""
@@ -484,7 +481,6 @@ def staff_register():
         )
 
         if not all([
-            registration_code,
             staff_username,
             staff_name,
             department,
@@ -494,11 +490,6 @@ def staff_register():
             confirm_password
         ]):
             flash("Please fill in all fields.")
-            return redirect(url_for("staff_register"))
-
-        # Check private registration code
-        if registration_code != STAFF_REGISTRATION_CODE:
-            flash("Invalid staff registration code.")
             return redirect(url_for("staff_register"))
 
         # Only these two roles are allowed
@@ -514,6 +505,7 @@ def staff_register():
             flash("Passwords do not match.")
             return redirect(url_for("staff_register"))
 
+        # Staff password format: admin@ + department + staff code
         # Example: admin@cse040
         expected_password = (
             "admin@" + department + staff_code
